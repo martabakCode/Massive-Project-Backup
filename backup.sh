@@ -4,8 +4,8 @@
 source_dir="/var/www/html"
 
 # Destination server details
-destination_server="user@destination_server_ip"
-destination_dir="/path/to/destination/directory"
+destination_server="root@serverb"
+destination_dir="~/serverlogs"
 
 # Backup directory
 backup_dir="/path/to/backup/directory"
