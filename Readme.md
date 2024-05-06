@@ -49,4 +49,4 @@ This Bash script automates the process of backing up web files, compressing them
 
 ## License
 
-This project is licensed under the [sisingamangaraja License](LICENSE).
+This project is licensed under the [Sisingamangaraja License].
