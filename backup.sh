@@ -16,6 +16,11 @@ timestamp=$(date +"%Y%m%d%H%M%S")
 # Create a new directory for the backup using the timestamp
 backup_folder="${backup_dir}/backup_${timestamp}"
 
+#Database Configuration
+db_user="root"
+db_password="root"
+db_name="backup_project"
+
 # Create the backup directory if it doesn't exist
 mkdir -p "$backup_folder"
 
@@ -29,6 +34,19 @@ else
     echo "Backup failed."
     exit 1
 fi
+
+# Database backup
+db_backup_file="${backup_folder}/${db_name}_backup.sql"
+mysqldump -u "$db_user" -p"$db_password" "$db_name" > "$db_backup_file"
+
+# Check if database backup was successful
+if [ $? -eq 0 ]; then
+    echo "Database backup completed successfully. File saved as: $db_backup_file"
+else
+    echo "Database backup failed."
+    exit 1
+fi
+
 
 # Compress the backup folder
 backup_archive="${backup_folder}.tar.gz"
