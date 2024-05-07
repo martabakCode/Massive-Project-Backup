@@ -1,52 +1,57 @@
-# Web Files Backup and Transfer Script
+# Script Pencadangan dan Transfer File dan Database
 
-This Bash script automates the process of backing up web files, compressing them, and transferring the compressed backup to another server using rsync.
+Skrip Bash ini mengotomatisasi proses pencadangan file web dan database, memampatkan mereka, dan mentransfer pencadangan yang sudah dipampatkan ke server lain menggunakan rsync.
 
-## Features
+## Fitur
 
-- Backup web files from a specified directory.
-- Compress the backup into a tar.gz archive.
-- Transfer the compressed backup to another server securely using rsync.
-- Optional cleanup to remove local backup archives.
+- Mencadangkan file web dari direktori yang ditentukan.
+- Mencadangkan database MySQL atau MariaDB.
+- Memampatkan pencadangan menjadi arsip tar.gz.
+- Mentransfer pencadangan yang sudah dipampatkan ke server lain secara aman menggunakan rsync.
+- Opsional membersihkan pencadangan lokal yang sudah tidak diperlukan.
 
-## Prerequisites
+## Prasyarat
 
-- Unix-like operating system (Linux, macOS, etc.).
-- Bash shell.
-- SSH access to the destination server for rsync.
+- Sistem operasi mirip Unix (Linux, macOS, dll.).
+- Shell Bash.
+- Akses SSH ke server tujuan untuk rsync.
+- Utilitas `mysqldump` terinstal untuk pencadangan database (untuk database MySQL atau MariaDB).
 
-## Usage
+## Penggunaan
 
-1. Clone or download the repository to your local machine:
+1. Clone atau unduh repositori ke mesin lokal Anda:
 
     ```
-    git clone https://github.com/yourusername/web-files-backup.git
+    git clone https://github.com/yourusername/web-files-and-db-backup.git
     ```
 
-2. Modify the configuration variables in the `backup.sh` script:
+2. Ubah variabel konfigurasi dalam skrip `backup.sh`:
 
-    - `source_dir`: Path to the directory containing your web files.
-    - `destination_server`: SSH username and IP address of the destination server.
-    - `destination_dir`: Path to the directory on the destination server where you want to copy the files.
-    - `backup_dir`: Local directory where backup archives will be stored.
+    - `source_dir`: Jalur ke direktori yang berisi file web Anda.
+    - `destination_server`: Nama pengguna SSH dan alamat IP server tujuan.
+    - `destination_dir`: Jalur ke direktori di server tujuan di mana Anda ingin menyalin file.
+    - `backup_dir`: Direktori lokal di mana arsip pencadangan akan disimpan.
+    - `db_user`: Nama pengguna untuk database MySQL atau MariaDB.
+    - `db_password`: Kata sandi untuk database MySQL atau MariaDB.
+    - `db_name`: Nama database MySQL atau MariaDB yang ingin Anda cadangkan.
 
-3. Make the script executable:
+3. Jadikan skrip tersebut dapat dieksekusi:
 
     ```
     chmod +x backup.sh
     ```
 
-4. Schedule the script to run periodically using cron jobs. For example, to run it every Sunday at 01:00 AM:
+4. Jadwalkan skrip untuk berjalan secara berkala menggunakan cron jobs. Misalnya, untuk menjalankannya setiap Minggu pukul 01:00 pagi:
 
     ```
     0 1 * * 0 /path/to/backup.sh
     ```
 
-    Replace `/path/to/backup.sh` with the actual path to the script.
+    Ganti `/path/to/backup.sh` dengan jalur aktual ke skrip.
 
-5. (Optional) Customize cleanup behavior:
-    - If you want to remove older backup archives to save disk space, uncomment the relevant lines in the script.
+5. (Opsional) Sesuaikan perilaku pembersihan:
+    - Jika Anda ingin menghapus arsip pencadangan lama untuk menghemat ruang disk, hilangkan komentar pada baris yang relevan dalam skrip.
 
-## License
+## Lisensi
 
-This project is licensed under the [Sisingamangaraja License].
+Projek ini dilisensikan di bawah oleh Sisingamangaraja team.
