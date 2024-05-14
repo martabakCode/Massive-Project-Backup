@@ -17,8 +17,8 @@ timestamp=$(date +"%Y%m%d%H%M%S")
 backup_folder="${backup_dir}/backup_${timestamp}"
 
 # Konfigurasi Database
-db_user_encrypted="U2FsdGVkX1+v0o2qxD4zrD8jyKSuHbh0" # Enkripsi dengan OpenSSL
-db_password_encrypted="U2FsdGVkX1/IZGAgSdjwhw==" # Enkripsi dengan OpenSSL
+db_user="root"
+db_password="root"
 db_name="backup_project"
 
 # Buat direktori backup jika belum ada
@@ -37,7 +37,7 @@ fi
 
 # Backup database
 db_backup_file="${backup_folder}/${db_name}_backup.sql"
-openssl enc -aes-256-cbc -d -in <(echo "$db_user_encrypted" | openssl enc -aes-256-cbc -d -a) -out <(echo "$db_user_encrypted" | openssl enc -aes-256-cbc -d -a) -k "your_database_key" > "$db_backup_file"
+mysqldump -u "$db_user" -p"$db_password" "$db_name" > "$db_backup_file"
 
 # Periksa apakah backup database berhasil
 if [ $? -eq 0 ]; then
@@ -59,8 +59,19 @@ else
     exit 1
 fi
 
+# Enkripsi file tar.gz
+openssl enc -aes-256-cbc -salt -in "$backup_archive" -out "${backup_archive}.enc" -pass pass:redhat
+
+# Periksa apakah enkripsi berhasil
+if [ $? -eq 0 ]; then
+    echo "Enkripsi berhasil. Arsip backup dienkripsi: ${backup_archive}.enc"
+else
+    echo "Enkripsi gagal."
+    exit 1
+fi
+
 # Transfer arsip backup ke server tujuan menggunakan rsync
-rsync -avz --progress "$backup_archive" "$destination_server:$destination_dir"
+rsync -avz --progress "${backup_archive}.enc" "$destination_server:$destination_dir"
 
 # Periksa apakah rsync berhasil
 if [ $? -eq 0 ]; then
@@ -71,5 +82,7 @@ else
 fi
 
 # Pembersihan: Hapus arsip backup lokal
-rm -f "$backup_archive"
+rm -f "$backup_archive" "${backup_archive}.enc"
 rm -rf "$backup_folder"
+# Opsional, Anda mungkin ingin menghapus backup lama untuk menghemat ruang disk
+# Contoh: find "$backup_dir" -type f -name "backup_*.tar.gz" -mtime +7 -exec rm {} \;
