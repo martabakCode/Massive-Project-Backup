@@ -1,78 +1,77 @@
 #!/bin/bash
 
-# Source directory where your web files are located
+# Direktori sumber di mana berkas web Anda berada
 source_dir="/var/www/html"
 
-# Destination server details
+# Detail server tujuan
 destination_server="root@serverb"
 destination_dir="~/serverlogs"
 
-# Backup directory
+# Direktori backup
 backup_dir="/path/to/backup/directory"
 
-# Create a timestamp for the backup folder name
+# Buat penanda waktu untuk nama folder backup
 timestamp=$(date +"%Y%m%d%H%M%S")
 
-# Create a new directory for the backup using the timestamp
+# Buat direktori baru untuk backup menggunakan penanda waktu
 backup_folder="${backup_dir}/backup_${timestamp}"
 
-#Database Configuration
+# Konfigurasi Database
 db_user="root"
 db_password="root"
 db_name="backup_project"
 
-# Create the backup directory if it doesn't exist
+# Buat direktori backup jika belum ada
 mkdir -p "$backup_folder"
 
-# Perform the backup
+# Lakukan backup
 cp -r "$source_dir" "$backup_folder"
 
-# Check if the backup was successful
+# Periksa apakah backup berhasil
 if [ $? -eq 0 ]; then
-    echo "Backup completed successfully. Files copied to: $backup_folder"
+    echo "Backup berhasil. Berkas disalin ke: $backup_folder"
 else
-    echo "Backup failed."
+    echo "Backup gagal."
     exit 1
 fi
 
-# Database backup
+# Backup database
 db_backup_file="${backup_folder}/${db_name}_backup.sql"
 mysqldump -u "$db_user" -p"$db_password" "$db_name" > "$db_backup_file"
 
-# Check if database backup was successful
+# Periksa apakah backup database berhasil
 if [ $? -eq 0 ]; then
-    echo "Database backup completed successfully. File saved as: $db_backup_file"
+    echo "Backup database berhasil. Berkas disimpan sebagai: $db_backup_file"
 else
-    echo "Database backup failed."
+    echo "Backup database gagal."
     exit 1
 fi
 
-
-# Compress the backup folder
+# Kompresi folder backup
 backup_archive="${backup_folder}.tar.gz"
 tar -czf "$backup_archive" -C "$backup_dir" "backup_${timestamp}"
 
-# Check if compression was successful
+# Periksa apakah kompresi berhasil
 if [ $? -eq 0 ]; then
-    echo "Compression completed successfully. Backup archive created: $backup_archive"
+    echo "Kompresi berhasil. Arsip backup dibuat: $backup_archive"
 else
-    echo "Compression failed."
+    echo "Kompresi gagal."
     exit 1
 fi
 
-# Transfer the backup archive to the destination server using rsync
+# Transfer arsip backup ke server tujuan menggunakan rsync
 rsync -avz --progress "$backup_archive" "$destination_server:$destination_dir"
 
-# Check if rsync was successful
+# Periksa apakah rsync berhasil
 if [ $? -eq 0 ]; then
-    echo "Backup archive transferred successfully to $destination_server:$destination_dir"
+    echo "Arsip backup berhasil ditransfer ke $destination_server:$destination_dir"
 else
-    echo "Transfer failed."
+    echo "Transfer gagal."
     exit 1
 fi
 
-# Cleanup: Remove the local backup archive
+# Pembersihan: Hapus arsip backup lokal
 rm -f "$backup_archive"
-
-# Optionally, you may want to remove older backups to save disk space
-# Example: find "$backup_dir" -type f -name "backup_*.tar.gz" -mtime +7 -exec rm {} \;
+rm -rf "$backup_folder"
+# Opsional, Anda mungkin ingin menghapus backup lama untuk menghemat ruang disk
+# Contoh: find "$backup_dir" -type f -name "backup_*.tar.gz" -mtime +7 -exec rm {} \;
