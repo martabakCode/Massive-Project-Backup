@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Direktori sumber di mana berkas web Anda berada
-source_dir="/var/www/html"
+source_dir="/var/www/html/backup.com/public"
 
 # Detail server tujuan
-destination_server="root@serverb"
+destination_server="root@node2"
 destination_dir="~/serverlogs"
 
 # Direktori backup
-backup_dir="/path/to/backup/directory"
+backup_dir="/home/backup"
 
 # Buat penanda waktu untuk nama folder backup
 timestamp=$(date +"%Y%m%d%H%M%S")
